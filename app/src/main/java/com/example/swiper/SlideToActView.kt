@@ -157,7 +157,9 @@ class SlideToActView @JvmOverloads constructor(
             if (field != 0) {
                 ResourcesCompat.getDrawable(context.resources, value, context.theme)?.let {
                     mDrawableArrow = it
-                    DrawableCompat.setTint(it, iconColor)
+                    if(iconColor != 0){
+                        DrawableCompat.setTint(it, iconColor)
+                    }
                 }
                 invalidate()
             }
@@ -312,15 +314,15 @@ class SlideToActView @JvmOverloads constructor(
 
             val defaultOuter = ContextCompat.getColor(
                 this.context,
-                R.color.slidetoact_defaultAccent
+                R.color.transparent
             )
             val defaultWhite = ContextCompat.getColor(
                 this.context,
-                R.color.slidetoact_white
+                R.color.transparent
             )
             val defaultText = ContextCompat.getColor(
                 this.context,
-                R.color.swipe_backgraund_text
+                R.color.black
             )
 
             with(attrs) {
@@ -332,17 +334,17 @@ class SlideToActView @JvmOverloads constructor(
 
                 actualOuterColor = getColor(R.styleable.SlideToActView_outer_color, defaultOuter)
                 actualInnerColor = getColor(R.styleable.SlideToActView_inner_color, defaultWhite)
-                actualInnerColorText = getColor(R.styleable.SlideToActView_inner_color, defaultText)
+                actualInnerColorText = getColor(R.styleable.SlideToActView_text_color, defaultText)
 
                 // For text color, check if the `text_color` is set.
                 // if not check if the `outer_color` is set.
                 // if not, default to white.
-//                actualTextColor = when {
-//                    hasValue(R.styleable.SlideToActView_text_color) ->
-//                        getColor(R.styleable.SlideToActView_text_color, actualInnerColorText)
-//                    hasValue(R.styleable.SlideToActView_inner_color) -> actualInnerColorText
-//                    else -> actualInnerColorText
-//                }
+                actualTextColor = when {
+                    hasValue(R.styleable.SlideToActView_text_color) ->
+                        getColor(R.styleable.SlideToActView_text_color, actualInnerColorText)
+                    hasValue(R.styleable.SlideToActView_inner_color) -> actualInnerColor
+                    else -> defaultText
+                }
 
                 text = getString(R.styleable.SlideToActView_text) ?: ""
                 typeFace = getInt(R.styleable.SlideToActView_text_style, 0)
@@ -398,7 +400,7 @@ class SlideToActView @JvmOverloads constructor(
 
                 mIconMargin = getDimensionPixelSize(
                     R.styleable.SlideToActView_icon_margin,
-                    resources.getDimensionPixelSize(R.dimen.slidetoact_default_icon_margin)
+                    resources.getDimensionPixelSize(R.dimen.slidetoact_default_area_cero)
                 )
 
                 mArrowMargin = mIconMargin
@@ -428,7 +430,7 @@ class SlideToActView @JvmOverloads constructor(
 
         outerColor = actualOuterColor
         innerColor = actualInnerColor
-        iconColor = actualIconColor
+        //iconColor = actualIconColor
 
         // This outline provider force removal of shadow
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -504,7 +506,7 @@ class SlideToActView @JvmOverloads constructor(
         mInnerRect.set(
             (mActualAreaMargin + mEffectivePosition).toFloat(),
             mActualAreaMargin.toFloat(),
-            (mAreaHeight + mEffectivePosition).toFloat() - mActualAreaMargin.toFloat(),
+            (mAreaHeight + mEffectivePosition).toFloat() - mActualAreaMargin.toFloat() + 100,
             mAreaHeight.toFloat() - mActualAreaMargin.toFloat()
         )
         canvas.drawRoundRect(
